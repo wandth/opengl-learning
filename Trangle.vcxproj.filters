@@ -51,6 +51,9 @@
     <None Include="shader\vertex_shader.glsl">
       <Filter>resources</Filter>
     </None>
+    <None Include="shader\fragment_shader_2.glsl">
+      <Filter>resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Trangle.rc">

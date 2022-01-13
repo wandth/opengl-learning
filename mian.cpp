@@ -35,7 +35,8 @@ int main()
 
 	// shader
 
-	Shader shader = { "shader/vertex_shader.glsl", "shader/fragment_shader.glsl" };
+	Shader first_trangle_shader = { "shader/vertex_shader.glsl", "shader/fragment_shader.glsl" };
+	Shader second_trangle_shader = { "shader/vertex_shader.glsl", "shader/fragment_shader_2.glsl" };
 
 	float vertices[] = {
 		// position				// colors
@@ -76,8 +77,9 @@ int main()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	auto trans_matrix = glm::mat4(1.0f);
 
+
+	auto trans_matrix = glm::mat4(1.0f);
 
 	while (!glfwWindowShouldClose(windows))
 	{
@@ -86,11 +88,19 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		// 注意 比如如此的书写 分别激活当前所使用的shader 然后 绑定视图
 		trans_matrix = glm::rotate(trans_matrix, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1.0f));
-		shader.active();
-		shader.setMat4("transform", trans_matrix);
+		first_trangle_shader.active();
+		first_trangle_shader.setMat4("transform", trans_matrix);
+		second_trangle_shader.active();
+		second_trangle_shader.setMat4("transform", trans_matrix);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// draw shapes
+		first_trangle_shader.active();
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+
+		second_trangle_shader.active();
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * 3));
 
 		glfwSwapBuffers(windows);
 		glfwPollEvents();
