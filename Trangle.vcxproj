@@ -158,7 +158,7 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="snipaste.png" />
+    <Image Include="resources\tex_1.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\fragment_shader.glsl" />

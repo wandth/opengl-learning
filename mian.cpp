@@ -13,8 +13,8 @@
 #include "Shader.h"
 
 
-int width = 800;
-int height = 600;
+const int WIDTH = 800;
+const int HEIGHT = 600;
 
 void processInput(GLFWwindow* window);
 void framebufferSizeCB(GLFWwindow* window, int width, int height);
@@ -27,23 +27,22 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	auto windows = glfwCreateWindow(width, height, "trangle", NULL, NULL);
+	auto windows = glfwCreateWindow(WIDTH, HEIGHT, "trangle", NULL, NULL);
 
 	glfwMakeContextCurrent(windows);
 	glfwSetFramebufferSizeCallback(windows, framebufferSizeCB);
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	// shader
-
-	Shader first_trangle_shader = { "shader/vertex_shader.glsl", "shader/fragment_shader.glsl" };
-	Shader second_trangle_shader = { "shader/vertex_shader.glsl", "shader/fragment_shader_2.glsl" };
+	Shader shader = { "shader/vertex_shader.glsl", "shader/fragment_shader.glsl" };
+	//Shader second_trangle_shader = { "shader/vertex_shader.glsl", "shader/fragment_shader_2.glsl" };
 
 	float vertices[] = {
-		// position				// colors
-		-0.25f,	 -0.5f,	 0.0f,		1.0f,	 1.0f,	 0.5f,
-		0.15f,	 0.0f,	 0.0f,		0.5f,	 1.0f,	 0.4f,
-		0.0f,	 0.5f,	 0.0f,		0.8f,	 1.0f,	0.0f,
-		0.5f,	 -0.4f,	 0.0f,		1.0f,	1.0f,	0.5f
+		// position					 colors					texture coordinates
+		-0.5f,	 -0.5f,	 0.0f,		1.0f,	 1.0f,	 0.5f,	0.0f, 0.0f, // buttom left
+		-0.5f,	 0.5f,	 0.0f,		0.5f,	 1.0f,	 0.4f,	0.0f, 1.0f, // top left
+		0.5f,	 -0.5f,	 0.0f,		0.8f,	 1.0f,	0.0f,	1.0f, 0.0f, // buttom right
+		0.5f,	 0.5f,	 0.0f,		1.0f,	1.0f,	0.5f,	1.0f, 1.0f// top right
 	};
 
 	unsigned int indeices[] = {
@@ -70,16 +69,43 @@ int main()
 
 	// set attribute  pointer
 	// positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// colors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	// textures cooridnates
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	// texture
+	unsigned int texture;
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	//	s --> x, t --> y, r --> z
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	// load image
+	int width;
+	int height;
+	int channels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* image = stbi_load("resources/tex_1.jpg", &width, &height, &channels, 0);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	stbi_image_free(image);
 
 
-	auto trans_matrix = glm::mat4(1.0f);
 
 	while (!glfwWindowShouldClose(windows))
 	{
@@ -89,18 +115,21 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 注意 比如如此的书写 分别激活当前所使用的shader 然后 绑定视图
-		trans_matrix = glm::rotate(trans_matrix, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1.0f));
-		first_trangle_shader.active();
-		first_trangle_shader.setMat4("transform", trans_matrix);
-		second_trangle_shader.active();
-		second_trangle_shader.setMat4("transform", trans_matrix);
-
+		// auto trans_matrix = glm::mat4(1.0f);
+		// trans_matrix = glm::rotate(trans_matrix, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1.0f));
+		// first_trangle_shader.active();
+		// first_trangle_shader.setMat4("transform", trans_matrix);
+		// second_trangle_shader.active();
+		// second_trangle_shader.setMat4("transform", trans_matrix);
+		shader.active();
+		shader.setInt("tex", 0);
+		glActiveTexture(GL_TEXTURE0);
 		// draw shapes
-		first_trangle_shader.active();
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0);
+		shader.active();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
-		second_trangle_shader.active();
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * 3));
+		//second_trangle_shader.active();
+		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * 3));
 
 		glfwSwapBuffers(windows);
 		glfwPollEvents();

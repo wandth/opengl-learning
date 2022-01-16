@@ -16,6 +16,9 @@
     <Filter Include="resources">
       <UniqueIdentifier>{9afc69a6-da26-40f5-9467-7c523340fbfa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader">
+      <UniqueIdentifier>{9c54f75e-faf8-4134-bc71-bc740741f990}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mian.cpp">
@@ -40,19 +43,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="snipaste.png">
+    <Image Include="resources\tex_1.jpg">
       <Filter>resources</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\fragment_shader.glsl">
-      <Filter>resources</Filter>
-    </None>
-    <None Include="shader\vertex_shader.glsl">
-      <Filter>resources</Filter>
+      <Filter>shader</Filter>
     </None>
     <None Include="shader\fragment_shader_2.glsl">
-      <Filter>resources</Filter>
+      <Filter>shader</Filter>
+    </None>
+    <None Include="shader\vertex_shader.glsl">
+      <Filter>shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

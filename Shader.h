@@ -19,6 +19,7 @@ public:
 
 	void active();
 	void setMat4(const std::string& attr_name, glm::mat4 val);
+	void setInt(const std::string& attr_name, int val);
 
 private:
 	std::string loadShaderSrc(const char* file_path);
