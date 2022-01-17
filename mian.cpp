@@ -99,7 +99,7 @@ int main()
 	unsigned int texture_1, texture_2;
 
 	glGenTextures(1, &texture_1);
-
+	glBindTexture(GL_TEXTURE_2D, texture_1);
 	// 设置重复方式及纹理映射方式
 	//	s --> x, t --> y, r --> z
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -124,9 +124,11 @@ int main()
 	glGenerateMipmap(GL_TEXTURE_2D);
 	stbi_image_free(image_2);
 
+
+	auto trans_matrix = glm::mat4(1.0f);
+	trans_matrix = glm::rotate(trans_matrix, glm::radians(45.0f), glm::vec3(0, 0, 1.0f));
 	shader.active();
-	shader.setInt("tex_1", 0);
-	shader.setInt("tex_2", 1);
+	shader.setMat4("transform", trans_matrix);
 
 	while (!glfwWindowShouldClose(windows))
 	{
@@ -136,18 +138,21 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// 注意 比如如此的书写 分别激活当前所使用的shader 然后 绑定视图
-		// auto trans_matrix = glm::mat4(1.0f);
-		// trans_matrix = glm::rotate(trans_matrix, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1.0f));
-		// first_trangle_shader.active();
-		// first_trangle_shader.setMat4("transform", trans_matrix);
-		// second_trangle_shader.active();
-		// second_trangle_shader.setMat4("transform", trans_matrix);
+		shader.active();
+		shader.setInt("tex_1", 0);
+		shader.setInt("tex_2", 1);
+
+		//second_trangle_shader.active();
+		//second_trangle_shader.setMat4("transform", trans_matrix);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_1);
+		 glBindTexture(GL_TEXTURE_2D, texture_1);
+		
+		//glActiveTexture(GL_TEXTURE1);
+		//glBindTexture(GL_TEXTURE_2D, texture_2);
+		glBindVertexArray(vertex_array_object);
+		shader.active();
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture_2);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 

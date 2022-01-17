@@ -22,7 +22,6 @@ public:
 	void setInt(const std::string& name, int value);
 
 
-
 private:
 	std::string loadShaderSrc(const char* file_path);
 	unsigned int compileShader(const char* file_path, GLenum type);

@@ -43,14 +43,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\tex_1.jpg">
-      <Filter>resources</Filter>
-    </Image>
-    <Image Include="resources\tex_2.jpg">
-      <Filter>resources</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="shader\fragment_shader.glsl">
       <Filter>shader</Filter>
     </None>
@@ -65,5 +57,13 @@
     <ResourceCompile Include="Trangle.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\tex_1.jpg">
+      <Filter>resources</Filter>
+    </Image>
+    <Image Include="resources\tex_2.jpg">
+      <Filter>resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

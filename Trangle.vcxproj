@@ -158,16 +158,16 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\tex_1.jpg" />
-    <Image Include="resources\tex_2.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="shader\fragment_shader.glsl" />
     <None Include="shader\fragment_shader_2.glsl" />
     <None Include="shader\vertex_shader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Trangle.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\tex_1.jpg" />
+    <Image Include="resources\tex_2.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
