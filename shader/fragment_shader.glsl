@@ -5,12 +5,13 @@ in vec2 texCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D tex;
+uniform sampler2D tex_1;
+uniform sampler2D tex_2;
 
 void main()
 {
 	// FragColor = vec4(outColor, 1.0f);
 
 	//						ÌùÍ¼£¬ uv×ø±ê
-	FragColor = texture2D(tex, texCoord);
+	FragColor =mix(texture(tex_1, texCoord), texture(tex_2, texCoord), 0.5);
 }

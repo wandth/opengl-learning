@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\tex_1.jpg" />
+    <Image Include="resources\tex_2.jpg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\fragment_shader.glsl" />

@@ -61,6 +61,7 @@ int main()
 
 	// bind vbo and assign data
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_object);
+
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	// setup ebo
@@ -81,11 +82,25 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	// texture
-	unsigned int texture;
+	/*
 
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
+		   Shder             texture units
+								┌──────┐
+								│      │
+  uniform simple 2D tex_1 ──────┤► 0   ├──────►tex_1
+								├──────┤
+								│      │
+  uniform simple 2D tex_2 ──────┼─►1   ├──────►tex_1
+								├──────┤
+								│  2   │
+								└──────┘
+	*/
 
+	unsigned int texture_1, texture_2;
+
+	glGenTextures(1, &texture_1);
+
+	// 设置重复方式及纹理映射方式
 	//	s --> x, t --> y, r --> z
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -94,18 +109,24 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// load image
-	int width;
-	int height;
-	int channels;
+	int width, height, channels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* image = stbi_load("resources/tex_1.jpg", &width, &height, &channels, 0);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	unsigned char* image_1 = stbi_load("resources/tex_1.jpg", &width, &height, &channels, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_1);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image_1);
 
-	stbi_image_free(image);
+	// another texture
+	glGenTextures(1, &texture_2);
+	glBindTexture(GL_TEXTURE_2D, texture_2);
+	unsigned char* image_2 = stbi_load("resources/tex_2.jpg", &width, &height, &channels, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_2);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	stbi_image_free(image_2);
 
-
+	shader.active();
+	shader.setInt("tex_1", 0);
+	shader.setInt("tex_2", 1);
 
 	while (!glfwWindowShouldClose(windows))
 	{
@@ -121,11 +142,13 @@ int main()
 		// first_trangle_shader.setMat4("transform", trans_matrix);
 		// second_trangle_shader.active();
 		// second_trangle_shader.setMat4("transform", trans_matrix);
-		shader.active();
-		shader.setInt("tex", 0);
+
 		glActiveTexture(GL_TEXTURE0);
-		// draw shapes
-		shader.active();
+		glBindTexture(GL_TEXTURE_2D, texture_1);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture_2);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
 		//second_trangle_shader.active();

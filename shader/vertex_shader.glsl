@@ -7,7 +7,6 @@ layout (location = 2) in vec2 tex_coordinate;
 // out color to fragment shader
 out vec3 outColor;
 out vec2 texCoord;
-uniform mat4 transform;
 
 void main()
 {
