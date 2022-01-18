@@ -19,6 +19,7 @@ const int HEIGHT = 600;
 void processInput(GLFWwindow* window);
 void framebufferSizeCB(GLFWwindow* window, int width, int height);
 
+float mix_value = 0.5f;
 
 int main()
 {
@@ -84,16 +85,16 @@ int main()
 	// texture
 	/*
 
-		   Shder             texture units
-								┌──────┐
-								│      │
-  uniform simple 2D tex_1 ──────┤► 0   ├──────►tex_1
-								├──────┤
-								│      │
-  uniform simple 2D tex_2 ──────┼─►1   ├──────►tex_1
-								├──────┤
-								│  2   │
-								└──────┘
+				Shder             texture units
+									┌──────┐
+									│      │
+		uniform simple 2D tex_1 ──────┤► 0   ├──────►tex_1
+									├──────┤
+									│      │
+		uniform simple 2D tex_2 ──────┼─►1   ├──────►tex_1
+									├──────┤
+									│  2   │
+									└──────┘
 	*/
 
 	unsigned int texture_1, texture_2;
@@ -141,19 +142,18 @@ int main()
 		shader.active();
 		shader.setInt("tex_1", 0);
 		shader.setInt("tex_2", 1);
-
+		//shader.setFloat("mix_value", mix_value);
 		//second_trangle_shader.active();
 		//second_trangle_shader.setMat4("transform", trans_matrix);
 
 		glActiveTexture(GL_TEXTURE0);
-		 glBindTexture(GL_TEXTURE_2D, texture_1);
+		glBindTexture(GL_TEXTURE_2D, texture_1);
 		
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, texture_2);
-		glBindVertexArray(vertex_array_object);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture_2);
+
 		shader.active();
-
-
+		shader.setFloat("mix_value", mix_value);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
 		//second_trangle_shader.active();
@@ -170,6 +170,24 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	// change mix value
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		mix_value += 0.01f;
+		if (mix_value > 1)
+		{
+			mix_value = 1.0f;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		mix_value -= 0.01f;
+		if (mix_value < 0)
+		{
+			mix_value = 0.0f;
+		}
+	}
 }
 void framebufferSizeCB(GLFWwindow* window, int width, int height)
 {
