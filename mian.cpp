@@ -12,6 +12,11 @@
 
 #include "Shader.h"
 
+#include "io/Keyboard.h"
+#include "io/Mouse.h"
+#include "io/JoyStick.h"
+
+
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -21,6 +26,9 @@ void framebufferSizeCB(GLFWwindow* window, int width, int height);
 
 float mix_value = 0.5f;
 
+auto transform = glm::mat4(1.0f);
+Joystick main_joy_stick(0);
+
 int main()
 {
 	glfwInit();
@@ -28,10 +36,16 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	auto windows = glfwCreateWindow(WIDTH, HEIGHT, "trangle", NULL, NULL);
+	auto window = glfwCreateWindow(WIDTH, HEIGHT, "trangle", NULL, NULL);
 
-	glfwMakeContextCurrent(windows);
-	glfwSetFramebufferSizeCallback(windows, framebufferSizeCB);
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, framebufferSizeCB);
+
+	glfwSetKeyCallback(window, Keyboard::keyCallback);
+	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
+	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
+	glfwSetScrollCallback(window, Mouse::mouseWheelCallback);
+
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 	// shader
@@ -131,10 +145,21 @@ int main()
 	shader.active();
 	shader.setMat4("transform", trans_matrix);
 
-	while (!glfwWindowShouldClose(windows))
+	main_joy_stick.update();
+
+	if (main_joy_stick.isPresent())
+	{
+
+		std::cout << main_joy_stick.getName() << std::endl;
+	}
+	else
+		std::cout << "not present" << std::endl;
+
+
+	while (!glfwWindowShouldClose(window))
 	{
 		// render here
-		processInput(windows);
+		processInput(window);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -154,12 +179,14 @@ int main()
 
 		shader.active();
 		shader.setFloat("mix_value", mix_value);
+		shader.setMat4("transform", transform);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 
 		//second_trangle_shader.active();
 		//glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(unsigned int) * 3));
 
-		glfwSwapBuffers(windows);
+		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	glfwTerminate();
@@ -168,11 +195,11 @@ int main()
 
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (Keyboard::key(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, true);
 
 	// change mix value
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (Keyboard::key(GLFW_KEY_UP))
 	{
 		mix_value += 0.01f;
 		if (mix_value > 1)
@@ -180,7 +207,7 @@ void processInput(GLFWwindow* window)
 			mix_value = 1.0f;
 		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (Keyboard::key(GLFW_KEY_DOWN))
 	{
 		mix_value -= 0.01f;
 		if (mix_value < 0)
@@ -188,6 +215,44 @@ void processInput(GLFWwindow* window)
 			mix_value = 0.0f;
 		}
 	}
+	if (Keyboard::key(GLFW_KEY_W))
+	{
+		transform = glm::translate(transform, glm::vec3(0.0f, 0.01f, 0.0f));
+	}
+	if (Keyboard::key(GLFW_KEY_S))
+	{
+		transform = glm::translate(transform, glm::vec3(0.0f, -0.01f, 0.0f));
+	}
+	if (Keyboard::key(GLFW_KEY_A))
+	{
+		transform = glm::translate(transform, glm::vec3(-0.01f, 0.0f, 0.0f));
+	}
+	if (Keyboard::key(GLFW_KEY_D))
+	{
+		transform = glm::translate(transform, glm::vec3(0.01f, 0.0f, 0.0f));
+	}
+	if (Keyboard::key(GLFW_KEY_UP))
+	{
+		transform = glm::scale(transform, glm::vec3(0.99f, 0.99f, 0.0f));
+	}
+	if (Keyboard::key(GLFW_KEY_DOWN))
+	{
+		transform = glm::scale(transform, glm::vec3(1.01f, 1.01f, 0.0f));
+	}
+	main_joy_stick.update();
+
+
+	//float lx = main_joy_stick.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_X);
+	//float ly = -main_joy_stick.axesState(GLFW_JOYSTICK_AXES_LEFT_STICK_Y);
+
+	//if (std::abs(lx) > 0.5f)
+	//{
+	//	transform = glm::translate(transform, glm::vec3(lx / 10000, 0.0f, 0.0f));
+	//}
+	//if (std::abs(ly) > 0.5f)
+	//{
+	//	transform = glm::translate(transform, glm::vec3(0.0f, lx / 10000, 0.0f));
+	//}
 }
 void framebufferSizeCB(GLFWwindow* window, int width, int height)
 {

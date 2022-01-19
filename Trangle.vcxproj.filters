@@ -19,6 +19,12 @@
     <Filter Include="shader">
       <UniqueIdentifier>{9c54f75e-faf8-4134-bc71-bc740741f990}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\io">
+      <UniqueIdentifier>{7ed1ab67-f077-4c76-bfb7-3f77f2bfec57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\io">
+      <UniqueIdentifier>{6505119f-ccb3-4ae6-bb0b-127c33da47e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mian.cpp">
@@ -30,6 +36,15 @@
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="io\Mouse.cpp">
+      <Filter>源文件\io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\Keyboard.cpp">
+      <Filter>源文件\io</Filter>
+    </ClCompile>
+    <ClCompile Include="io\JoyStick.cpp">
+      <Filter>源文件\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -40,6 +55,15 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="io\Keyboard.h">
+      <Filter>头文件\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\Mouse.h">
+      <Filter>头文件\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\JoyStick.h">
+      <Filter>头文件\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
