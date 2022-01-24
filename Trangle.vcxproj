@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />
+    <ClCompile Include="io\Camera.cpp" />
     <ClCompile Include="io\JoyStick.cpp" />
     <ClCompile Include="io\Keyboard.cpp" />
     <ClCompile Include="io\Mouse.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="io\Camera.h" />
     <ClInclude Include="io\JoyStick.h" />
     <ClInclude Include="io\Keyboard.h" />
     <ClInclude Include="io\Mouse.h" />

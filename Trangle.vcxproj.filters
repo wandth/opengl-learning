@@ -45,6 +45,9 @@
     <ClCompile Include="io\JoyStick.cpp">
       <Filter>源文件\io</Filter>
     </ClCompile>
+    <ClCompile Include="io\Camera.cpp">
+      <Filter>源文件\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
@@ -63,6 +66,9 @@
       <Filter>头文件\io</Filter>
     </ClInclude>
     <ClInclude Include="io\JoyStick.h">
+      <Filter>头文件\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\Camera.h">
       <Filter>头文件\io</Filter>
     </ClInclude>
   </ItemGroup>

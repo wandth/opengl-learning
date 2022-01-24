@@ -15,6 +15,7 @@
 #include "io/Keyboard.h"
 #include "io/Mouse.h"
 #include "io/JoyStick.h"
+#include "io/Camera.h"
 
 
 unsigned int SCREEN_WIDTH = 800;
@@ -22,16 +23,23 @@ unsigned int SCREEN_HEIGHT = 600;
 
 float x, y, z;
 
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, double dt);
 void framebufferSizeCB(GLFWwindow* window, int width, int height);
 
 float mix_value = 1.0f;
 
 auto transform = glm::mat4(1.0f);
-//Joystick main_joy_stick(0);
+
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+
 
 int main()
 {
+	float delta_time = 0.0f;
+	float last_frame = 0.0f;
+
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -46,9 +54,12 @@ int main()
 	glfwSetCursorPosCallback(window, Mouse::cursorPosCallback);
 	glfwSetMouseButtonCallback(window, Mouse::mouseButtonCallback);
 	glfwSetScrollCallback(window, Mouse::mouseWheelCallback);
+
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
 
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	glEnable(GL_DEPTH_TEST);
@@ -185,12 +196,16 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{
-		// render here
-		processInput(window);
+		double current_time = glfwGetTime();
+		delta_time = current_time - last_frame;
+		last_frame = current_time;
+
+
+		processInput(window, delta_time);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// 注意 比如如此的书写 分别激活当前所使用的shader 然后 绑定视图
+	
 		shader.active();
 		shader.setInt("tex_1", 0);
 		shader.setInt("tex_2", 1);
@@ -208,8 +223,10 @@ int main()
 
 
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-		view = glm::translate(view, glm::vec3(-x, -y, -z));
-		projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,0.1f,  100.0f);
+		//view = glm::translate(view, glm::vec3(-x, -y, -z));
+		view = camera.getViewMatrix();
+
+		projection = glm::perspective(glm::radians(camera.zoom), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,0.1f,  100.0f);
 
 
 		shader.active();
@@ -229,52 +246,38 @@ int main()
 	return 0;
 }
 
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, double dt)
 {
 	if (Keyboard::key(GLFW_KEY_ESCAPE))
 		glfwSetWindowShouldClose(window, true);
 
-	// change mix value
-	//if (Keyboard::key(GLFW_KEY_UP))
-	//{
-	//	mix_value += 0.01f;
-	//	if (mix_value > 1)
-	//	{
-	//		mix_value = 1.0f;
-	//	}
-	//}
-	//if (Keyboard::key(GLFW_KEY_DOWN))
-	//{
-	//	mix_value -= 0.01f;
-	//	if (mix_value < 0)
-	//	{
-	//		mix_value = 0.0f;
-	//	}
-	//}
 	if (Keyboard::key(GLFW_KEY_W))
 	{
-		y -= 0.01f;
+		camera.updateCameraPos(CameraDirection::FORWARD, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_S))
 	{
-		y += 0.01f;
+		camera.updateCameraPos(CameraDirection::BACKWARD, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_A))
 	{
-		x += 0.01f;
+		camera.updateCameraPos(CameraDirection::LEFT, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_D))
 	{
-		x -= 0.01f;
+		camera.updateCameraPos(CameraDirection::RIGHT, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_UP))
 	{
-		z -= 0.01f;
+		camera.updateCameraPos(CameraDirection::UP, dt);
 	}
 	if (Keyboard::key(GLFW_KEY_DOWN))
 	{
-		z += 0.01f;
+		camera.updateCameraPos(CameraDirection::DOWN, dt);
 	}
+
+
+
 }
 void framebufferSizeCB(GLFWwindow* window, int width, int height)
 {
